@@ -1,7 +1,7 @@
 # blog python服务端
 
 
-使用了poetry管理依赖
+使用了poetry(https://python-poetry.org/)管理依赖,未安装poetry，可以使用`pip install poetry`进行安装
 
 ```
 poetry install
