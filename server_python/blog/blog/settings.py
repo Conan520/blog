@@ -66,21 +66,24 @@ CORS_ALLOW_HEADERS = (
 )
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vue3 开发服务器默认地址
+    "http://39.107.53.40:4173",  # 你的前端地址
+    "http://localhost:4173",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+#ALLOWED_HOSTS = ['39.107.53.40', 'localhost']
 
 ROOT_URLCONF = 'blog.urls'
 
