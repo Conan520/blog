@@ -1,6 +1,7 @@
 # coding=utf-8
 import traceback
 
+from django.core.cache import cache
 from django.core.files.storage import FileSystemStorage
 from django.db import transaction
 from loguru import logger
@@ -9,8 +10,8 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
-from rest_framework.decorators import action
 
 from login.auth import CustomJSONWebTokenAuthentication
 from myblog.models import Category, Blog
@@ -38,6 +39,7 @@ class AuthView(APIView):
 
 
 class CategoryView(AuthView):
+    throttle_classes = [AnonRateThrottle]
 
     def post(self, request: Request) -> Response:
         token = request.headers.get("token")
@@ -79,16 +81,22 @@ class CategoryView(AuthView):
 
     def get(self, request):
         """获取分类列表"""
-        try:
-            queryset = Category.objects.all()
-            serializer = CategorySerializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.error(f"Get category list failed: {str(e)}")
-            return Response(
-                {"error": "服务器内部错误"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        cache_key = "optimized_category_list"
+        cached_data = cache.get(cache_key)
+        if not cached_data:
+            try:
+                queryset = Category.objects.all()
+                serializer = CategorySerializer(queryset, many=True)
+                cached_data = serializer.data
+                cache.set(cache_key, cached_data, 300)  # 缓存5分钟
+            except Exception as e:
+                logger.error(f"Critical error: {str(e)}", exc_info=True)
+                return Response(
+                    {"error": "服务暂时不可用"},
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                )
+
+        return Response(cached_data, status=status.HTTP_200_OK)
 
     def put(self, request):
         try:
@@ -183,7 +191,6 @@ class BlogView(AuthView):
         ORDER BY `create_time`
         DESC 
         '''
-        print(sql)
         queryset = Blog.objects.raw(sql, params)
 
         # 分页处理（伪代码）

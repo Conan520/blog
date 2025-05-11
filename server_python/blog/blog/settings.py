@@ -85,6 +85,28 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 #ALLOWED_HOSTS = ['39.107.53.40', 'localhost']
 
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',  # 匿名用户限流
+        'rest_framework.throttling.UserRateThrottle'   # 认证用户限流
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/minute',  # 匿名用户每分钟100次
+        'user': '1000/minute'  # 认证用户每分钟1000次
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
 ROOT_URLCONF = 'blog.urls'
 
 TEMPLATES = [

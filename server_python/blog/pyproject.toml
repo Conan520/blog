@@ -13,6 +13,8 @@ loguru = "^0.7.2"
 redis = "^5.1.1"
 djangorestframework-simplejwt = "^5.5.0"
 pymysql = "^1.1.1"
+django-redis = "^5.4.0"
+cryptography = "^44.0.3"
 
 
 [build-system]
