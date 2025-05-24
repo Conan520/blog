@@ -2,5 +2,5 @@
 */.idea
 */db.sqlite3
 */node_modules
-server_python/blog/blog/__pycache__/
 server_python/blog/myblog/migrations/
+server_python/blog/*/__pycache__

@@ -74,4 +74,4 @@ class LoginView(APIView):
                     "access": access,
                     "username": serializer.data['username'],
                 }})
-        return Response({"code": 200, "msg": "账号或密码错误", "refresh": "", "access": ""})
+        return Response({"code": 1004, "msg": "账号或密码错误", "refresh": "", "access": ""})

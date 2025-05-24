@@ -3,37 +3,64 @@
 body {
   margin: 0;
   padding: 0;
+  background-color: #f5f7f9;
 }
-/*#app {*/
-/*  max-width: 1280px;*/
-/*  margin: 0 auto;*/
-/*  padding: 2rem;*/
-/*  font-weight: normal;*/
-/*}*/
 
-/*a,*/
-/*.green {*/
-/*  text-decoration: none;*/
-/*  color: hsla(160, 100%, 37%, 1);*/
-/*  transition: 0.4s;*/
-/*  padding: 3px;*/
-/*}*/
+#app {
+  min-height: 100vh;
+}
 
-/*@media (hover: hover) {*/
-/*  a:hover {*/
-/*    background-color: hsla(160, 100%, 37%, 0.2);*/
-/*  }*/
-/*}*/
+/* Modern button styles */
+.n-button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-/*@media (min-width: 1024px) {*/
-/*  body {*/
-/*    display: flex;*/
-/*    place-items: center;*/
-/*  }*/
+.n-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
 
-/*  #app {*/
-/*    display: grid;*/
-/*    grid-template-columns: 1fr 1fr;*/
-/*    padding: 0 2rem;*/
-/*  }*/
-/*}*/
+.n-button.n-button--primary-type {
+  background-color: var(--primary);
+}
+
+.n-button.n-button--primary-type:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Card styles */
+.n-card {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.n-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Container component */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+/* Utility classes */
+.text-primary { color: var(--primary); }
+.text-secondary { color: var(--secondary); }
+.text-accent { color: var(--accent); }
+.bg-primary-light { background-color: var(--primary-light); }
+.bg-accent-light { background-color: var(--accent-light); }

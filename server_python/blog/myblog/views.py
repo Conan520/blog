@@ -40,6 +40,7 @@ class AuthView(APIView):
 
 class CategoryView(AuthView):
     throttle_classes = [AnonRateThrottle]
+    cache_key = "optimized_category_list"
 
     def post(self, request: Request) -> Response:
         token = request.headers.get("token")
@@ -48,10 +49,10 @@ class CategoryView(AuthView):
                 "code": 401,
                 "msg": "请先登录"
             }, status=status.HTTP_200_OK)
-        logger.info(f"Category creation request: {request}")
+        logger.debug(f"Category creation request: {request}")
         _id = idgen.next_id()
         try:
-            logger.info(f"CategoryView generated id = {_id}")
+            logger.debug(f"CategoryView generated id = {_id}")
             name = request.data["name"]
             category = {
                 "id": _id,
@@ -62,6 +63,10 @@ class CategoryView(AuthView):
                 serializer = CategorySerializer(data=category)
                 serializer.is_valid(raise_exception=True)  # 自动抛出 ValidationError
                 serializer.save()
+                cached_data = cache.get(self.cache_key)
+                if cached_data:
+                    cached_data.append(serializer.data)
+                    cache.set(self.cache_key, cached_data, 300)  # 缓存5分钟
 
                 # 返回创建的资源数据
                 return Response(data={
@@ -72,23 +77,22 @@ class CategoryView(AuthView):
 
         except Exception as e:
             logger.error(f"Category creation failed: {str(e)}")
-            return Response(
-                {
+            return Response({
                     "code": 400,
-                    "msg": str(e)},
+                    "msg": str(e)
+                },
                 status=status.HTTP_200_OK
             )
 
     def get(self, request):
         """获取分类列表"""
-        cache_key = "optimized_category_list"
-        cached_data = cache.get(cache_key)
+        cached_data = cache.get(self.cache_key)
         if not cached_data:
             try:
                 queryset = Category.objects.all()
                 serializer = CategorySerializer(queryset, many=True)
                 cached_data = serializer.data
-                cache.set(cache_key, cached_data, 300)  # 缓存5分钟
+                cache.set(self.cache_key, cached_data, 300)  # 缓存5分钟
             except Exception as e:
                 logger.error(f"Critical error: {str(e)}", exc_info=True)
                 return Response(
@@ -96,7 +100,11 @@ class CategoryView(AuthView):
                     status=status.HTTP_503_SERVICE_UNAVAILABLE
                 )
 
-        return Response(cached_data, status=status.HTTP_200_OK)
+        return Response({
+            "code": 200,
+            "msg": "success",
+            "data": cached_data,
+        }, status=status.HTTP_200_OK)
 
     def put(self, request):
         try:
@@ -126,7 +134,12 @@ class CategoryView(AuthView):
         try:
             with transaction.atomic():
                 category = Category.objects.get(pk=_id)
+                category_data = CategorySerializer(category).data
                 category.delete()
+                cached_data = cache.get(self.cache_key)
+                if cached_data:
+                    cached_data.remove(category_data)
+                    cache.set(self.cache_key, cached_data, 300)  # 缓存5分钟
                 return Response(
                     data={"code": 200, "msg": "success"},
                     status=status.HTTP_200_OK

@@ -1,0 +1,8 @@
+datasource:
+  username: root
+  password: root123
+  dbname: mytest
+  host: 127.0.0.1
+  port: 3306
+  charset: utf8mb4
+  loc: Local
