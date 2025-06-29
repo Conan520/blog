@@ -20,7 +20,7 @@ func SearchBlogs(c *gin.Context) {
 	categoryId := c.Query("categoryId")
 	params := make([]interface{}, 0)
 	whereSqlStrs := make([]string, 0)
-	if categoryId != "" {
+	if categoryId != "" && categoryId != "0" {
 		whereSqlStrs = append(whereSqlStrs, "`category_id` = ?")
 		params = append(params, categoryId)
 	}
@@ -42,12 +42,12 @@ func SearchBlogs(c *gin.Context) {
 		response.Fail(c, 500, "")
 		return
 	}
-	fmt.Println(page, pageSize)
 	pageEnd := len(blogs)
 	if page*pageSize < pageEnd {
 		pageEnd = page * pageSize
 	}
 	paginatedBlogs := blogs[(page-1)*pageSize : pageEnd]
+	fmt.Println(paginatedBlogs)
 	response.Success(c, 200, "ok", gin.H{
 		"results":   paginatedBlogs,
 		"count":     len(blogs),

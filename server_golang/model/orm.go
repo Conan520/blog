@@ -13,7 +13,7 @@ func (UserInfo) TableName() string {
 }
 
 type Category struct {
-	ID        uint64    `gorm:"primaryKey" json:"id""`
+	ID        uint64    `gorm:"primaryKey" json:"id"`
 	Name      string    `gorm:"unique" json:"name"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 }

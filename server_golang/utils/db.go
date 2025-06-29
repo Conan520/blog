@@ -29,7 +29,6 @@ func InitDB() *gorm.DB {
 		database,
 		charset,
 		url.QueryEscape(loc))
-	fmt.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	//db, err := gorm.Open(driverName, args)
 	if err != nil {

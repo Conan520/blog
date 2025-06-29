@@ -17,5 +17,5 @@ func RegisterRouter(r *gin.Engine) {
 	r.POST("/blog/add", middleware.AuthMiddleware(), controller.AddBlog)
 	r.PUT("/blog/update", middleware.AuthMiddleware(), controller.UpdateBlog)
 	r.GET("/blog/search", controller.SearchBlogs)
-	r.GET("/blog/detail/:id", middleware.AuthMiddleware(), controller.GetBlogDetail)
+	r.GET("/blog/detail/:id", controller.GetBlogDetail)
 }
