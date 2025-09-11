@@ -161,18 +161,26 @@ class BlogView(AuthView):
             request.data.update({"id": idgen.next_id()})
             with transaction.atomic():
                 article = BlogSerializer(data=request.data)
-                article.is_valid(raise_exception=True)
-                article.save()
-                return Response(data={
-                    "code": 200,
-                    "msg": "添加成功",
-                }, status=status.HTTP_200_OK)
+                if article.is_valid():
+                    article.save()
+                    return Response(data={
+                        "code": 200,
+                        "msg": "添加成功",
+                    }, status=status.HTTP_200_OK)
+                else:
+                    logger.error(f"Blog validation errors: {article.errors}")
+                    return Response({
+                        "code": 400,
+                        "msg": "数据验证失败",
+                        "errors": article.errors
+                    }, status=status.HTTP_200_OK)
+
         except Exception as e:
             logger.error(f"Blog creation failed: {str(e)}")
             return Response({
                 "code": 400,
                 "msg": "服务器错误"
-            },status=status.HTTP_200_OK)
+            }, status=status.HTTP_200_OK)
 
     def get(self, request: Request) -> Response:
         try:

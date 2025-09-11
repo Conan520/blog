@@ -16,7 +16,15 @@ class Category(models.Model):
 
 class Blog(models.Model):
     id = models.BigIntegerField(primary_key=True, null=False)
-    category_id = models.BigIntegerField(blank=True, null=True)
+    category_id = models.ForeignKey(
+        Category,
+        to_field="id",
+        db_column="category_id",
+        related_name="blogs",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     title = models.CharField(blank=True, null=False, max_length=200)
     content = models.TextField(blank=True, null=True)
     create_time = models.BigIntegerField(blank=True, null=True)

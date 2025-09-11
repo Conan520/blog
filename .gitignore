@@ -3,4 +3,6 @@
 */db.sqlite3
 */node_modules
 server_python/blog/myblog/migrations/
-server_python/blog/*/__pycache__
+server_python/blog/*/__pycache__/*
+*.pyc
+

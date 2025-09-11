@@ -15,6 +15,10 @@ from pathlib import Path
 import pymysql
 pymysql.install_as_MySQLdb()
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -102,6 +106,7 @@ CACHES = {
         "LOCATION": "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            'PASSWORD': os.getenv("REDIS_PASSWORD"),  # 如果需要
         }
     }
 }
@@ -136,7 +141,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytest',      # 数据库名
         'USER': 'root',          # 用户名（如root）
-        'PASSWORD': 'root123',  # 密码
+        'PASSWORD': os.getenv("MYSQL_PASSWORD"),  # 密码
         'HOST': 'localhost',       # 或MySQL服务器IP（远程时使用）
         'PORT': '3306',            # 默认端口
         'OPTIONS': {
